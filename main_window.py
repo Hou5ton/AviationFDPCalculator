@@ -27,10 +27,11 @@ class MainWindow(QMainWindow):
 		tabs = QTabWidget()
 		layout.addWidget(tabs)
 
-		# Вкладка "Планирование"
+		# Вкладка "Планирование" - ДОЛЖНА БЫТЬ ПЕРВОЙ
 		self.planning_tab = PlanningTab()
 		tabs.addTab(self.planning_tab, "Планирование")
 
+		# Остальные вкладки...
 		# Вкладка "Экипаж"
 		self.crew_tab = QWidget()
 		self.setup_crew_tab()

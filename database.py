@@ -362,6 +362,30 @@ class Database:
 				conn.close()
 		return None
 
+	def get_duties_with_details(self):
+		"""Возвращает все задания с подробной информацией о члене экипажа и воздушном судне"""
+		conn = self.create_connection()
+		if conn is not None:
+			try:
+				cursor = conn.cursor()
+				cursor.execute('''
+	                SELECT d.id, d.crew_member_id, cm.name as crew_name, 
+	                       d.aircraft_id, a.registration, a.type as aircraft_type,
+	                       d.start_time, d.scheduled_sectors, d.departure_airport, 
+	                       d.arrival_airport, d.rest_in_flight, d.has_frms, d.status
+	                FROM duties d
+	                JOIN crew_members cm ON d.crew_member_id = cm.id
+	                JOIN aircrafts a ON d.aircraft_id = a.id
+	                ORDER BY d.start_time DESC
+	            ''')
+				return cursor.fetchall()
+			except sqlite3.Error as e:
+				print(f"Ошибка при получении заданий с деталями: {e}")
+			finally:
+				conn.close()
+		return []
+
+
 	def get_all_duties(self):
 		"""Возвращает все задания из базы данных"""
 		conn = self.create_connection()
