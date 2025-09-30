@@ -27,6 +27,10 @@ class MainWindow(QMainWindow):
 		tabs = QTabWidget()
 		layout.addWidget(tabs)
 
+		# Вкладка "Калькулятор"
+		self.calculator_tab = CalculatorTab()
+		tabs.addTab(self.calculator_tab, "Калькулятор")
+
 		# Вкладка "Планирование" - ДОЛЖНА БЫТЬ ПЕРВОЙ
 		self.planning_tab = PlanningTab()
 		tabs.addTab(self.planning_tab, "Планирование")
@@ -37,9 +41,6 @@ class MainWindow(QMainWindow):
 		self.setup_crew_tab()
 		tabs.addTab(self.crew_tab, "Экипаж")
 
-		# Вкладка "Калькулятор"
-		self.calculator_tab = CalculatorTab()
-		tabs.addTab(self.calculator_tab, "Калькулятор FDP")
 
 		# Вкладка "График"
 		self.schedule_tab = ScheduleTab()
