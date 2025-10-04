@@ -12,7 +12,7 @@ def main():
     window.show()
 
     # Запускаем цикл обработки событий
-    sys.exit(app.exec())
+    sys.exit(app.exec())    
 
 if __name__ == "__main__":
     main()

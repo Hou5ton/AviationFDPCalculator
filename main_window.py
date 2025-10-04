@@ -8,6 +8,7 @@ from aircraft_dialog import AircraftDialog
 from planning_tab import PlanningTab
 from calculator_gui import CalculatorTab  # Добавляем импорт CalculatorTab
 from schedule_tab import ScheduleTab
+from document_viewer import DocumentViewer
 from database import db
 import os
 
@@ -50,6 +51,10 @@ class MainWindow(QMainWindow):
 		self.aircraft_tab = QWidget()
 		self.setup_aircraft_tab()
 		tabs.addTab(self.aircraft_tab, "Воздушные суда")
+
+		# НОВАЯ ВКЛАДКА: Документ
+		self.document_tab = DocumentViewer()
+		tabs.addTab(self.document_tab, "📋 Документ №110")
 
 		# Инициализируем базу данных
 		self.init_database()
