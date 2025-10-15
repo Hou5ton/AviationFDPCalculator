@@ -384,22 +384,38 @@ class FDPCalculator:
 		try:
 			cursor = db_connection.cursor()
 
-			cursor.execute("""
-                SELECT SUM(flight_time) FROM flights 
-                WHERE crew_member_id = ? AND date(off_block_time) >= date('now', '-28 days')
-            """, (crew_member_id,))
+			# Sum flight_time from flights joined to duties filtered by crew_member_id
+			cursor.execute(
+				"""
+				SELECT COALESCE(SUM(f.flight_time), 0)
+				FROM flights f
+				JOIN duties d ON f.duty_id = d.id
+				WHERE d.crew_member_id = ? AND date(f.off_block_time) >= date('now', '-28 days')
+				""",
+				(crew_member_id,),
+			)
 			last_28_days = cursor.fetchone()[0] or 0
 
-			cursor.execute("""
-                SELECT SUM(flight_time) FROM flights 
-                WHERE crew_member_id = ? AND strftime('%Y', off_block_time) = strftime('%Y', 'now')
-            """, (crew_member_id,))
+			cursor.execute(
+				"""
+				SELECT COALESCE(SUM(f.flight_time), 0)
+				FROM flights f
+				JOIN duties d ON f.duty_id = d.id
+				WHERE d.crew_member_id = ? AND strftime('%Y', f.off_block_time) = strftime('%Y', 'now')
+				""",
+				(crew_member_id,),
+			)
 			current_year = cursor.fetchone()[0] or 0
 
-			cursor.execute("""
-                SELECT SUM(flight_time) FROM flights 
-                WHERE crew_member_id = ? AND date(off_block_time) >= date('now', '-12 months')
-            """, (crew_member_id,))
+			cursor.execute(
+				"""
+				SELECT COALESCE(SUM(f.flight_time), 0)
+				FROM flights f
+				JOIN duties d ON f.duty_id = d.id
+				WHERE d.crew_member_id = ? AND date(f.off_block_time) >= date('now', '-12 months')
+				""",
+				(crew_member_id,),
+			)
 			last_12_months = cursor.fetchone()[0] or 0
 
 			last_28_days_td = timedelta(minutes=last_28_days)

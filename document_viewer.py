@@ -3,7 +3,10 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTextEdit,
                              QPushButton, QLabel, QComboBox, QFrame, QMessageBox)
 from PyQt6.QtCore import Qt, QFile, QTextStream
 from PyQt6.QtGui import QFont
-import docx  # Library for reading .docx files
+try:
+    import docx  # Library for reading .docx files
+except Exception:  # Handle missing or faulty python-docx gracefully
+    docx = None
 
 
 class DocumentViewer(QWidget):
@@ -15,16 +18,22 @@ class DocumentViewer(QWidget):
         If file is not found or other errors occur, displays appropriate error message.
         """
         try:
-            # Create a Document object from the .docx file
-            doc = docx.Document('document_110.docx')
+            if docx is None:
+                # python-docx is not installed
+                self.document_content = (
+                    "Библиотека python-docx не установлена. Установите пакет 'python-docx' или откройте файл вручную."
+                )
+            else:
+                # Create a Document object from the .docx file
+                doc = docx.Document('document_110.docx')
 
-            # Extract text from all paragraphs in the document
-            full_text = []
-            for paragraph in doc.paragraphs:
-                full_text.append(paragraph.text)
+                # Extract text from all paragraphs in the document
+                full_text = []
+                for paragraph in doc.paragraphs:
+                    full_text.append(paragraph.text)
 
-            # Join all paragraphs with newline characters
-            self.document_content = '\n'.join(full_text)
+                # Join all paragraphs with newline characters
+                self.document_content = '\n'.join(full_text)
 
         except FileNotFoundError:
             # Handle case when document file doesn't exist
