@@ -252,6 +252,18 @@ class MainWindow(QMainWindow):
 			except Exception as e:
 				QMessageBox.critical(self, "Ошибка базы данных", f"Не удалось удалить данные: {e}")
 
+	def closeEvent(self, event):
+		"""Обработчик закрытия окна - сохраняем размеры панелей"""
+		try:
+			# Сохраняем размеры панелей калькулятора перед закрытием
+			if hasattr(self, 'calculator_tab') and hasattr(self.calculator_tab, 'save_panel_sizes'):
+				self.calculator_tab.save_panel_sizes()
+		except Exception as e:
+			print(f"Ошибка при сохранении размеров панелей: {e}")
+		
+		# Принимаем событие закрытия
+		event.accept()
+
 
 if __name__ == "__main__":
 	import sys

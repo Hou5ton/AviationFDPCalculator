@@ -13,8 +13,7 @@ def main():
     # Создаем и показываем главное окно
     window = MainWindow()
     window.setWindowTitle("Aviation FDP Calculator - Beta")
-    window.resize(800, 600)
-    window.show()
+    window.showMaximized()  # Открываем в полноэкранном режиме
 
     # Запускаем цикл обработки событий
     sys.exit(app.exec())    
