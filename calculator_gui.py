@@ -117,6 +117,7 @@ class AirportSearchWidget(QLineEdit):
         # Connect text change to search
         self.textChanged.connect(self.on_text_changed)
         self.returnPressed.connect(self.on_return_pressed)
+        
     
     def setup_autocomplete(self):
         """Setup autocomplete functionality"""
@@ -151,10 +152,16 @@ class AirportSearchWidget(QLineEdit):
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.completer.setFilterMode(Qt.MatchFlag.MatchContains)
         self.completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
-        self.completer.setMaxVisibleItems(10)
+        self.completer.setMaxVisibleItems(12)
+        
+        # Настройка ширины popup окна сразу после создания
+        popup = self.completer.popup()
+        popup.setMinimumWidth(280)  # Уменьшенная ширина на одну треть
+        popup.setMaximumWidth(300)  # Максимальная ширина
         
         # Connect completer selection
         self.completer.activated.connect(self.on_completer_activated)
+        
         
         # Set completer
         self.setCompleter(self.completer)
@@ -164,7 +171,13 @@ class AirportSearchWidget(QLineEdit):
         if len(text) >= 2:  # Start search after 2 characters
             # Update completer
             self.completer.setCompletionPrefix(text)
-            if not self.completer.popup().isVisible():
+            
+            # Настройка ширины popup окна при каждом показе
+            popup = self.completer.popup()
+            popup.setMinimumWidth(280)  # Уменьшенная ширина на одну треть
+            popup.setMaximumWidth(300)  # Максимальная ширина
+            
+            if not popup.isVisible():
                 self.completer.complete()
     
     def on_completer_activated(self, text):
@@ -203,6 +216,7 @@ class AirportSearchWidget(QLineEdit):
                         self.setText(codes_display)
                         self.airport_selected.emit(icao)
                         break
+    
     
     def get_current_icao(self):
         """Get the currently selected ICAO code"""
@@ -248,114 +262,114 @@ class SegmentWidget(QWidget):
         departure_emoji = create_airport_label("✈️", 20, "resources/airport.png")
         layout.addWidget(departure_emoji)
 
-        # Расширенная база данных аэропортов СНГ с ICAO, IATA кодами, городами и названиями
+        # Расширенная база данных аэропортов СНГ с ICAO, IATA кодами, городами, названиями и часовыми поясами
         self.airports_data = {
             # Беларусь
-            "UMMS": {"iata": "MSQ", "city": "Минск", "name": "Минск-2", "country": "Беларусь"},
-            "UMII": {"iata": "VTB", "city": "Витебск", "name": "Витебск", "country": "Беларусь"},
-            "UMGG": {"iata": "GME", "city": "Гомель", "name": "Гомель", "country": "Беларусь"},
-            "UMBB": {"iata": "BQT", "city": "Брест", "name": "Брест", "country": "Беларусь"},
-            "UMMG": {"iata": "MVQ", "city": "Могилев", "name": "Могилев", "country": "Беларусь"},
-            "UMKG": {"iata": "GNA", "city": "Гродно", "name": "Гродно", "country": "Беларусь"},
+            "UMMS": {"iata": "MSQ", "city": "Минск", "name": "Минск-2", "country": "Беларусь", "timezone": "Europe/Minsk"},
+            "UMII": {"iata": "VTB", "city": "Витебск", "name": "Витебск", "country": "Беларусь", "timezone": "Europe/Minsk"},
+            "UMGG": {"iata": "GME", "city": "Гомель", "name": "Гомель", "country": "Беларусь", "timezone": "Europe/Minsk"},
+            "UMBB": {"iata": "BQT", "city": "Брест", "name": "Брест", "country": "Беларусь", "timezone": "Europe/Minsk"},
+            "UMMG": {"iata": "MVQ", "city": "Могилев", "name": "Могилев", "country": "Беларусь", "timezone": "Europe/Minsk"},
+            "UMKG": {"iata": "GNA", "city": "Гродно", "name": "Гродно", "country": "Беларусь", "timezone": "Europe/Minsk"},
             
             # Россия
-            "UEEE": {"iata": "YKS", "city": "Якутск", "name": "Якутск", "country": "Россия"},
-            "UWKD": {"iata": "KZN", "city": "Казань", "name": "Казань", "country": "Россия"},
-            "UUDD": {"iata": "DME", "city": "Москва", "name": "Домодедово", "country": "Россия"},
-            "URSS": {"iata": "AER", "city": "Сочи", "name": "Сочи", "country": "Россия"},
-            "UUBW": {"iata": "VKO", "city": "Москва", "name": "Внуково", "country": "Россия"},
-            "UUEE": {"iata": "SVO", "city": "Москва", "name": "Шереметьево", "country": "Россия"},
-            "URRR": {"iata": "ROV", "city": "Ростов-на-Дону", "name": "Ростов-на-Дону", "country": "Россия"},
-            "UWWW": {"iata": "KUF", "city": "Самара", "name": "Курумоч", "country": "Россия"},
-            "UUYY": {"iata": "SCW", "city": "Сыктывкар", "name": "Сыктывкар", "country": "Россия"},
-            "UHMA": {"iata": "DYR", "city": "Анадырь", "name": "Анадырь", "country": "Россия"},
-            "UMMM": {"iata": "MMK", "city": "Мурманск", "name": "Мурманск", "country": "Россия"},
-            "URKA": {"iata": "KRR", "city": "Краснодар", "name": "Краснодар", "country": "Россия"},
-            "UWUU": {"iata": "UFA", "city": "Уфа", "name": "Уфа", "country": "Россия"},
-            "USSS": {"iata": "SVX", "city": "Екатеринбург", "name": "Кольцово", "country": "Россия"},
-            "UUWW": {"iata": "VOZ", "city": "Воронеж", "name": "Воронеж", "country": "Россия"},
-            "UMMC": {"iata": "CEE", "city": "Череповец", "name": "Череповец", "country": "Россия"},
+            "UEEE": {"iata": "YKS", "city": "Якутск", "name": "Якутск", "country": "Россия", "timezone": "Asia/Yakutsk"},
+            "UWKD": {"iata": "KZN", "city": "Казань", "name": "Казань", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UUDD": {"iata": "DME", "city": "Москва", "name": "Домодедово", "country": "Россия", "timezone": "Europe/Moscow"},
+            "URSS": {"iata": "AER", "city": "Сочи", "name": "Сочи", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UUBW": {"iata": "VKO", "city": "Москва", "name": "Внуково", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UUEE": {"iata": "SVO", "city": "Москва", "name": "Шереметьево", "country": "Россия", "timezone": "Europe/Moscow"},
+            "URRR": {"iata": "ROV", "city": "Ростов-на-Дону", "name": "Ростов-на-Дону", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UWWW": {"iata": "KUF", "city": "Самара", "name": "Курумоч", "country": "Россия", "timezone": "Europe/Samara"},
+            "UUYY": {"iata": "SCW", "city": "Сыктывкар", "name": "Сыктывкар", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UHMA": {"iata": "DYR", "city": "Анадырь", "name": "Анадырь", "country": "Россия", "timezone": "Asia/Anadyr"},
+            "UMMM": {"iata": "MMK", "city": "Мурманск", "name": "Мурманск", "country": "Россия", "timezone": "Europe/Moscow"},
+            "URKA": {"iata": "KRR", "city": "Краснодар", "name": "Краснодар", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UWUU": {"iata": "UFA", "city": "Уфа", "name": "Уфа", "country": "Россия", "timezone": "Asia/Yekaterinburg"},
+            "USSS": {"iata": "SVX", "city": "Екатеринбург", "name": "Кольцово", "country": "Россия", "timezone": "Asia/Yekaterinburg"},
+            "UUWW": {"iata": "VOZ", "city": "Воронеж", "name": "Воронеж", "country": "Россия", "timezone": "Europe/Moscow"},
+            "UMMC": {"iata": "CEE", "city": "Череповец", "name": "Череповец", "country": "Россия", "timezone": "Europe/Moscow"},
             
             # Украина
-            "UKBB": {"iata": "KBP", "city": "Киев", "name": "Борисполь", "country": "Украина"},
-            "UKLL": {"iata": "LWO", "city": "Львов", "name": "Львов", "country": "Украина"},
-            "UKDD": {"iata": "DNK", "city": "Днепр", "name": "Днепр", "country": "Украина"},
-            "UKHH": {"iata": "HRK", "city": "Харьков", "name": "Харьков", "country": "Украина"},
-            "UKOO": {"iata": "ODS", "city": "Одесса", "name": "Одесса", "country": "Украина"},
-            "UKKK": {"iata": "KGO", "city": "Кривой Рог", "name": "Кривой Рог", "country": "Украина"},
-            "UKDE": {"iata": "OZH", "city": "Запорожье", "name": "Запорожье", "country": "Украина"},
+            "UKBB": {"iata": "KBP", "city": "Киев", "name": "Борисполь", "country": "Украина", "timezone": "Europe/Kiev"},
+            "UKLL": {"iata": "LWO", "city": "Львов", "name": "Львов", "country": "Украина", "timezone": "Europe/Kiev"},
+            "UKDD": {"iata": "DNK", "city": "Днепр", "name": "Днепр", "country": "Украина", "timezone": "Europe/Kiev"},
+            "UKHH": {"iata": "HRK", "city": "Харьков", "name": "Харьков", "country": "Украина", "timezone": "Europe/Kiev"},
+            "UKOO": {"iata": "ODS", "city": "Одесса", "name": "Одесса", "country": "Украина", "timezone": "Europe/Kiev"},
+            "UKKK": {"iata": "KGO", "city": "Кривой Рог", "name": "Кривой Рог", "country": "Украина", "timezone": "Europe/Kiev"},
+            "UKDE": {"iata": "OZH", "city": "Запорожье", "name": "Запорожье", "country": "Украина", "timezone": "Europe/Kiev"},
             
             # Казахстан
-            "UAKD": {"iata": "ALA", "city": "Алматы", "name": "Алматы", "country": "Казахстан"},
-            "UACC": {"iata": "TSE", "city": "Астана", "name": "Нур-Султан", "country": "Казахстан"},
-            "UASK": {"iata": "CIT", "city": "Шымкент", "name": "Шымкент", "country": "Казахстан"},
-            "UATT": {"iata": "GUW", "city": "Атырау", "name": "Атырау", "country": "Казахстан"},
-            "UAAH": {"iata": "SCO", "city": "Актау", "name": "Актау", "country": "Казахстан"},
-            "UAKK": {"iata": "KGF", "city": "Караганда", "name": "Караганда", "country": "Казахстан"},
-            "UACP": {"iata": "PPK", "city": "Петропавловск", "name": "Петропавловск", "country": "Казахстан"},
-            "UAOO": {"iata": "URA", "city": "Уральск", "name": "Уральск", "country": "Казахстан"},
-            "UARR": {"iata": "AKX", "city": "Актобе", "name": "Актобе", "country": "Казахстан"},
-            "UAKZ": {"iata": "KSN", "city": "Костанай", "name": "Костанай", "country": "Казахстан"},
+            "UAKD": {"iata": "ALA", "city": "Алматы", "name": "Алматы", "country": "Казахстан", "timezone": "Asia/Almaty"},
+            "UACC": {"iata": "TSE", "city": "Астана", "name": "Нур-Султан", "country": "Казахстан", "timezone": "Asia/Almaty"},
+            "UASK": {"iata": "CIT", "city": "Шымкент", "name": "Шымкент", "country": "Казахстан", "timezone": "Asia/Almaty"},
+            "UATT": {"iata": "GUW", "city": "Атырау", "name": "Атырау", "country": "Казахстан", "timezone": "Asia/Aqtobe"},
+            "UAAH": {"iata": "SCO", "city": "Актау", "name": "Актау", "country": "Казахстан", "timezone": "Asia/Aqtobe"},
+            "UAKK": {"iata": "KGF", "city": "Караганда", "name": "Караганда", "country": "Казахстан", "timezone": "Asia/Almaty"},
+            "UACP": {"iata": "PPK", "city": "Петропавловск", "name": "Петропавловск", "country": "Казахстан", "timezone": "Asia/Almaty"},
+            "UAOO": {"iata": "URA", "city": "Уральск", "name": "Уральск", "country": "Казахстан", "timezone": "Asia/Aqtobe"},
+            "UARR": {"iata": "AKX", "city": "Актобе", "name": "Актобе", "country": "Казахстан", "timezone": "Asia/Aqtobe"},
+            "UAKZ": {"iata": "KSN", "city": "Костанай", "name": "Костанай", "country": "Казахстан", "timezone": "Asia/Almaty"},
             
             # Узбекистан
-            "UTTT": {"iata": "TAS", "city": "Ташкент", "name": "Ташкент", "country": "Узбекистан"},
-            "UTSS": {"iata": "SKD", "city": "Самарканд", "name": "Самарканд", "country": "Узбекистан"},
-            "UTSB": {"iata": "BHK", "city": "Бухара", "name": "Бухара", "country": "Узбекистан"},
-            "UTKN": {"iata": "KSQ", "city": "Карши", "name": "Карши", "country": "Узбекистан"},
-            "UTNN": {"iata": "NVI", "city": "Навои", "name": "Навои", "country": "Узбекистан"},
-            "UTNU": {"iata": "NCU", "city": "Нукус", "name": "Нукус", "country": "Узбекистан"},
-            "UTFF": {"iata": "FEG", "city": "Фергана", "name": "Фергана", "country": "Узбекистан"},
+            "UTTT": {"iata": "TAS", "city": "Ташкент", "name": "Ташкент", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
+            "UTSS": {"iata": "SKD", "city": "Самарканд", "name": "Самарканд", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
+            "UTSB": {"iata": "BHK", "city": "Бухара", "name": "Бухара", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
+            "UTKN": {"iata": "KSQ", "city": "Карши", "name": "Карши", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
+            "UTNN": {"iata": "NVI", "city": "Навои", "name": "Навои", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
+            "UTNU": {"iata": "NCU", "city": "Нукус", "name": "Нукус", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
+            "UTFF": {"iata": "FEG", "city": "Фергана", "name": "Фергана", "country": "Узбекистан", "timezone": "Asia/Tashkent"},
             
             # Кыргызстан
-            "UAFM": {"iata": "FRU", "city": "Бишкек", "name": "Манас", "country": "Кыргызстан"},
-            "UAFO": {"iata": "OSS", "city": "Ош", "name": "Ош", "country": "Кыргызстан"},
-            "UAFN": {"iata": "NAR", "city": "Нарын", "name": "Нарын", "country": "Кыргызстан"},
+            "UAFM": {"iata": "FRU", "city": "Бишкек", "name": "Манас", "country": "Кыргызстан", "timezone": "Asia/Bishkek"},
+            "UAFO": {"iata": "OSS", "city": "Ош", "name": "Ош", "country": "Кыргызстан", "timezone": "Asia/Bishkek"},
+            "UAFN": {"iata": "NAR", "city": "Нарын", "name": "Нарын", "country": "Кыргызстан", "timezone": "Asia/Bishkek"},
             
             # Таджикистан
-            "UTDD": {"iata": "DYU", "city": "Душанбе", "name": "Душанбе", "country": "Таджикистан"},
-            "UTDK": {"iata": "TJU", "city": "Куляб", "name": "Куляб", "country": "Таджикистан"},
-            "UTDL": {"iata": "LBD", "city": "Худжанд", "name": "Худжанд", "country": "Таджикистан"},
+            "UTDD": {"iata": "DYU", "city": "Душанбе", "name": "Душанбе", "country": "Таджикистан", "timezone": "Asia/Dushanbe"},
+            "UTDK": {"iata": "TJU", "city": "Куляб", "name": "Куляб", "country": "Таджикистан", "timezone": "Asia/Dushanbe"},
+            "UTDL": {"iata": "LBD", "city": "Худжанд", "name": "Худжанд", "country": "Таджикистан", "timezone": "Asia/Dushanbe"},
             
             # Туркменистан
-            "UTAA": {"iata": "ASB", "city": "Ашхабад", "name": "Ашхабад", "country": "Туркменистан"},
-            "UTAK": {"iata": "CRZ", "city": "Туркменабад", "name": "Туркменабад", "country": "Туркменистан"},
-            "UTAM": {"iata": "MYP", "city": "Мары", "name": "Мары", "country": "Туркменистан"},
-            "UTAT": {"iata": "KRW", "city": "Туркменбаши", "name": "Туркменбаши", "country": "Туркменистан"},
+            "UTAA": {"iata": "ASB", "city": "Ашхабад", "name": "Ашхабад", "country": "Туркменистан", "timezone": "Asia/Ashgabat"},
+            "UTAK": {"iata": "CRZ", "city": "Туркменабад", "name": "Туркменабад", "country": "Туркменистан", "timezone": "Asia/Ashgabat"},
+            "UTAM": {"iata": "MYP", "city": "Мары", "name": "Мары", "country": "Туркменистан", "timezone": "Asia/Ashgabat"},
+            "UTAT": {"iata": "KRW", "city": "Туркменбаши", "name": "Туркменбаши", "country": "Туркменистан", "timezone": "Asia/Ashgabat"},
             
             # Армения
-            "UDYZ": {"iata": "EVN", "city": "Ереван", "name": "Звартноц", "country": "Армения"},
-            "UDLS": {"iata": "LWN", "city": "Гюмри", "name": "Ширак", "country": "Армения"},
+            "UDYZ": {"iata": "EVN", "city": "Ереван", "name": "Звартноц", "country": "Армения", "timezone": "Asia/Yerevan"},
+            "UDLS": {"iata": "LWN", "city": "Гюмри", "name": "Ширак", "country": "Армения", "timezone": "Asia/Yerevan"},
             
             # Азербайджан
-            "UBBB": {"iata": "GYD", "city": "Баку", "name": "Гейдар Алиев", "country": "Азербайджан"},
-            "UBBG": {"iata": "KVD", "city": "Гянджа", "name": "Гянджа", "country": "Азербайджан"},
-            "UBBN": {"iata": "NAJ", "city": "Нахичевань", "name": "Нахичевань", "country": "Азербайджан"},
+            "UBBB": {"iata": "GYD", "city": "Баку", "name": "Гейдар Алиев", "country": "Азербайджан", "timezone": "Asia/Baku"},
+            "UBBG": {"iata": "KVD", "city": "Гянджа", "name": "Гянджа", "country": "Азербайджан", "timezone": "Asia/Baku"},
+            "UBBN": {"iata": "NAJ", "city": "Нахичевань", "name": "Нахичевань", "country": "Азербайджан", "timezone": "Asia/Baku"},
             
             # Грузия
-            "UGGG": {"iata": "TBS", "city": "Тбилиси", "name": "Тбилиси", "country": "Грузия"},
-            "UGSB": {"iata": "BUS", "city": "Батуми", "name": "Батуми", "country": "Грузия"},
-            "UGKO": {"iata": "KUT", "city": "Кутаиси", "name": "Кутаиси", "country": "Грузия"},
-            "UGSS": {"iata": "SUI", "city": "Сухуми", "name": "Сухуми", "country": "Грузия"},
+            "UGGG": {"iata": "TBS", "city": "Тбилиси", "name": "Тбилиси", "country": "Грузия", "timezone": "Asia/Tbilisi"},
+            "UGSB": {"iata": "BUS", "city": "Батуми", "name": "Батуми", "country": "Грузия", "timezone": "Asia/Tbilisi"},
+            "UGKO": {"iata": "KUT", "city": "Кутаиси", "name": "Кутаиси", "country": "Грузия", "timezone": "Asia/Tbilisi"},
+            "UGSS": {"iata": "SUI", "city": "Сухуми", "name": "Сухуми", "country": "Грузия", "timezone": "Asia/Tbilisi"},
             
             # Молдова
-            "LUKK": {"iata": "KIV", "city": "Кишинев", "name": "Кишинев", "country": "Молдова"},
+            "LUKK": {"iata": "KIV", "city": "Кишинев", "name": "Кишинев", "country": "Молдова", "timezone": "Europe/Chisinau"},
             
             # Европа (близлежащие)
-            "EPWA": {"iata": "WAW", "city": "Варшава", "name": "Шопен", "country": "Польша"},
-            "LOWW": {"iata": "VIE", "city": "Вена", "name": "Швехат", "country": "Австрия"},
-            "LZIB": {"iata": "BTS", "city": "Братислава", "name": "Братислава", "country": "Словакия"},
-            "LKPR": {"iata": "PRG", "city": "Прага", "name": "Вацлав Гавел", "country": "Чехия"},
-            "LHBP": {"iata": "BUD", "city": "Будапешт", "name": "Ферихедь", "country": "Венгрия"},
-            "LROP": {"iata": "OTP", "city": "Бухарест", "name": "Отопень", "country": "Румыния"},
-            "LBSF": {"iata": "SOF", "city": "София", "name": "София", "country": "Болгария"},
+            "EPWA": {"iata": "WAW", "city": "Варшава", "name": "Шопен", "country": "Польша", "timezone": "Europe/Warsaw"},
+            "LOWW": {"iata": "VIE", "city": "Вена", "name": "Швехат", "country": "Австрия", "timezone": "Europe/Vienna"},
+            "LZIB": {"iata": "BTS", "city": "Братислава", "name": "Братислава", "country": "Словакия", "timezone": "Europe/Bratislava"},
+            "LKPR": {"iata": "PRG", "city": "Прага", "name": "Вацлав Гавел", "country": "Чехия", "timezone": "Europe/Prague"},
+            "LHBP": {"iata": "BUD", "city": "Будапешт", "name": "Ферихедь", "country": "Венгрия", "timezone": "Europe/Budapest"},
+            "LROP": {"iata": "OTP", "city": "Бухарест", "name": "Отопень", "country": "Румыния", "timezone": "Europe/Bucharest"},
+            "LBSF": {"iata": "SOF", "city": "София", "name": "София", "country": "Болгария", "timezone": "Europe/Sofia"},
             
             # Азия
-            "ZYTX": {"iata": "SHE", "city": "Шэньян", "name": "Таосянь", "country": "Китай"},
-            "ZSPD": {"iata": "PVG", "city": "Шанхай", "name": "Пудун", "country": "Китай"},
-            "ZGGG": {"iata": "CAN", "city": "Гуанчжоу", "name": "Байюнь", "country": "Китай"},
-            "RJTT": {"iata": "HND", "city": "Токио", "name": "Ханеда", "country": "Япония"},
-            "RKSI": {"iata": "ICN", "city": "Сеул", "name": "Инчхон", "country": "Южная Корея"},
-            "VHHH": {"iata": "HKG", "city": "Гонконг", "name": "Чек Лап Кок", "country": "Гонконг"},
+            "ZYTX": {"iata": "SHE", "city": "Шэньян", "name": "Таосянь", "country": "Китай", "timezone": "Asia/Shanghai"},
+            "ZSPD": {"iata": "PVG", "city": "Шанхай", "name": "Пудун", "country": "Китай", "timezone": "Asia/Shanghai"},
+            "ZGGG": {"iata": "CAN", "city": "Гуанчжоу", "name": "Байюнь", "country": "Китай", "timezone": "Asia/Shanghai"},
+            "RJTT": {"iata": "HND", "city": "Токио", "name": "Ханеда", "country": "Япония", "timezone": "Asia/Tokyo"},
+            "RKSI": {"iata": "ICN", "city": "Сеул", "name": "Инчхон", "country": "Южная Корея", "timezone": "Asia/Seoul"},
+            "VHHH": {"iata": "HKG", "city": "Гонконг", "name": "Чек Лап Кок", "country": "Гонконг", "timezone": "Asia/Hong_Kong"},
         }
         
         # Departure airport selection with search functionality
@@ -370,8 +384,8 @@ class SegmentWidget(QWidget):
         self.departure_time.setDisplayFormat("dd.MM HH:mm")  # Более короткий формат
         self.departure_time.setDateTime(QDateTime.currentDateTime())  # Default to current time
         self.departure_time.setCalendarPopup(True)  # Enable calendar popup for easy date selection
-        self.departure_time.setMinimumWidth(110)  # Уменьшаем ширину
-        self.departure_time.setMaximumWidth(130)  # Ограничиваем максимальную ширину
+        self.departure_time.setMinimumWidth(90)  # Уменьшаем ширину
+        self.departure_time.setMaximumWidth(110)  # Ограничиваем максимальную ширину
         self.departure_time.dateTimeChanged.connect(self.on_departure_time_changed)  # Connect to validation
         layout.addWidget(self.departure_time)
 
@@ -392,8 +406,8 @@ class SegmentWidget(QWidget):
         # Default to current time + 1 hour for realistic flight duration
         self.arrival_time.setDateTime(QDateTime.currentDateTime().addSecs(3600))
         self.arrival_time.setCalendarPopup(True)  # Enable calendar popup for easy date selection
-        self.arrival_time.setMinimumWidth(110)  # Уменьшаем ширину
-        self.arrival_time.setMaximumWidth(130)  # Ограничиваем максимальную ширину
+        self.arrival_time.setMinimumWidth(90)  # Уменьшаем ширину
+        self.arrival_time.setMaximumWidth(110)  # Ограничиваем максимальную ширину
         layout.addWidget(self.arrival_time)
 
         # Add segment button
@@ -519,7 +533,7 @@ class SegmentWidget(QWidget):
     
     def get_airport_info(self, airport_code):
         """Получает информацию об аэропорте по коду"""
-        return self.airports_data.get(airport_code, {"city": "Неизвестно", "name": "Неизвестно", "country": "Неизвестно", "iata": "N/A"})
+        return self.airports_data.get(airport_code, {"city": "Неизвестно", "name": "Неизвестно", "country": "Неизвестно", "iata": "N/A", "timezone": "Europe/Minsk"})
     
     def on_departure_airport_selected(self, icao):
         """Handle departure airport selection"""
@@ -626,7 +640,7 @@ class CalculatorTab(QWidget):
         scroll_layout = QVBoxLayout(scroll_widget)
 
         # МАРШРУТ ПОЛЕТА (ПЕРВЫЙ БЛОК - ОСНОВА ВСЕХ РАСЧЕТОВ)
-        route_group = QGroupBox("🛫 Маршрут полета")
+        self.route_group = QGroupBox("🛫 Маршрут полета")
         route_main_layout = QVBoxLayout()
         route_main_layout.setContentsMargins(10, 8, 10, 10)  # Отступ сверху = 8px - небольшой отступ от заголовка
         route_main_layout.setAlignment(Qt.AlignmentFlag.AlignTop)  # Выравниваем содержимое по верхнему краю
@@ -643,8 +657,8 @@ class CalculatorTab(QWidget):
         
         route_main_layout.addLayout(self.segments_container)
         
-        route_group.setLayout(route_main_layout)
-        scroll_layout.addWidget(route_group)
+        self.route_group.setLayout(route_main_layout)
+        scroll_layout.addWidget(self.route_group)
 
         # ОСНОВНЫЕ ПАРАМЕТРЫ FDP
         basic_params_group = QGroupBox("🌍 Основные параметры FDP")
@@ -666,17 +680,6 @@ class CalculatorTab(QWidget):
         self.base_timezone_combo.currentTextChanged.connect(self.update_preview)
         basic_params_layout.addRow("Часовой пояс основного места базирования:", self.base_timezone_combo)
 
-        # Часовой пояс места начала FDP
-        self.local_timezone_combo = QComboBox()
-        self.local_timezone_combo.addItems([
-            "Europe/Minsk", "Europe/Moscow", "Europe/Kiev", "Europe/Warsaw", 
-            "Europe/Berlin", "Europe/Paris", "Europe/London", "America/New_York",
-            "Asia/Dubai", "Asia/Shanghai", "Asia/Tokyo"
-        ])
-        self.local_timezone_combo.setCurrentText("Europe/Minsk")
-        self.local_timezone_combo.setEditable(True)
-        self.local_timezone_combo.currentTextChanged.connect(self.update_preview)
-        basic_params_layout.addRow("Часовой пояс места начала FDP:", self.local_timezone_combo)
 
         # Часов с начала выполнения обязанностей
         self.hours_since_duty_spin = QSpinBox()
@@ -788,7 +791,7 @@ class CalculatorTab(QWidget):
         # Настройка скроллируемой области
         scroll_area.setWidget(scroll_widget)
         scroll_area.setWidgetResizable(True)
-        scroll_area.setMinimumHeight(600)
+        scroll_area.setMinimumHeight(550)  # Уменьшаем высоту для убирания прокрутки
         
         # Улучшаем скроллирование
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
@@ -918,33 +921,63 @@ class CalculatorTab(QWidget):
         # Create new segment with incremented number
         new_segment = SegmentWidget(segment_number + 1, self)
 
-        # Auto-fill departure from previous segment's arrival
-        if current_index >= 0 and current_index < len(self.segment_widgets):
-            prev_segment = self.segment_widgets[current_index]
-
-            # Set departure airport from previous arrival
-            # Устанавливаем аэропорт отправления нового сегмента как аэропорт прибытия предыдущего
-            prev_arrival_icao = prev_segment.arrival_combo.get_current_icao()
-            if prev_arrival_icao:
-                new_segment.departure_combo.set_airport(prev_arrival_icao)
-
-            # Set departure time as previous arrival time + 30 minutes
-            arrival_time = prev_segment.arrival_time.dateTime()
-            new_departure_time = arrival_time.addSecs(1800)  # +30 minutes
-            new_segment.departure_time.setDateTime(new_departure_time)
-
-            # Set arrival time as departure time + 1 hour
-            new_arrival_time = new_departure_time.addSecs(3600)  # +1 hour
-            new_segment.arrival_time.setDateTime(new_arrival_time)
-
         # Insert new segment after current segment
         self.segment_widgets.insert(current_index + 1, new_segment)
 
-        # Rebuild the entire segments layout
+        # Rebuild the entire segments layout first
         self.rebuild_segments_layout()
         
         # Update button visibility for all segments
         self.update_buttons_visibility()
+
+        # Auto-fill departure from previous segment's arrival AFTER layout is built
+        if current_index >= 0 and current_index < len(self.segment_widgets):
+            try:
+                prev_segment = self.segment_widgets[current_index]
+
+                # Set departure airport from previous arrival
+                # Устанавливаем аэропорт отправления нового сегмента как аэропорт прибытия предыдущего
+                if hasattr(prev_segment, 'arrival_combo') and prev_segment.arrival_combo:
+                    prev_arrival_icao = prev_segment.arrival_combo.get_current_icao()
+                    if prev_arrival_icao and hasattr(new_segment, 'departure_combo') and new_segment.departure_combo:
+                        new_segment.departure_combo.set_airport(prev_arrival_icao)
+                        # Блокируем поле аэропорта отправления для изменения
+                        new_segment.departure_combo.setEnabled(False)
+                        new_segment.departure_combo.setStyleSheet("""
+                            QLineEdit {
+                                background-color: #f0f0f0;
+                                color: #666666;
+                                border: 1px solid #cccccc;
+                            }
+                        """)
+                        new_segment.departure_combo.setToolTip("Аэропорт отправления автоматически установлен из предыдущего сегмента и заблокирован для изменения")
+
+                # Set arrival airport from previous departure (but keep it editable)
+                # Устанавливаем аэропорт прибытия нового сегмента как аэропорт отправления предыдущего, но оставляем редактируемым
+                if hasattr(prev_segment, 'departure_combo') and prev_segment.departure_combo:
+                    prev_departure_icao = prev_segment.departure_combo.get_current_icao()
+                    if prev_departure_icao and hasattr(new_segment, 'arrival_combo') and new_segment.arrival_combo:
+                        new_segment.arrival_combo.set_airport(prev_departure_icao)
+                        new_segment.arrival_combo.setToolTip("Аэропорт прибытия автоматически установлен из предыдущего сегмента, но может быть изменен")
+
+                # Set departure time as previous arrival time + 30 minutes
+                if hasattr(prev_segment, 'arrival_time') and prev_segment.arrival_time:
+                    arrival_time = prev_segment.arrival_time.dateTime()
+                    new_departure_time = arrival_time.addSecs(1800)  # +30 minutes
+                    if hasattr(new_segment, 'departure_time') and new_segment.departure_time:
+                        new_segment.departure_time.setDateTime(new_departure_time)
+
+                # Set arrival time as departure time + 1 hour
+                new_arrival_time = new_departure_time.addSecs(3600)  # +1 hour
+                if hasattr(new_segment, 'arrival_time') and new_segment.arrival_time:
+                    new_segment.arrival_time.setDateTime(new_arrival_time)
+            except Exception as e:
+                print(f"Ошибка при автозаполнении сегмента: {e}")
+                # Продолжаем выполнение без автозаполнения
+
+        # Принудительно обновляем весь layout
+        self.segments_container.update()
+        self.route_group.update()
 
     def remove_segment(self, segment_number):
         """
@@ -988,15 +1021,28 @@ class CalculatorTab(QWidget):
 
         # Add all segments back to container
         for segment in self.segment_widgets:
-            self.segments_container.addWidget(segment)
+            if segment is not None:
+                self.segments_container.addWidget(segment)
+                # Принудительно обновляем каждый сегмент
+                segment.adjustSize()
+                segment.update()
+                # Принудительно обновляем layout сегмента
+                segment.layout().update()
 
         # Renumber segments and update buttons
         self.renumber_segments()
+        
+        # Принудительно обновляем контейнер
+        self.segments_container.update()
+        
+        # Принудительно обновляем весь route_group
+        self.route_group.update()
 
     def renumber_segments(self):
         """Renumber all segments sequentially starting from 1"""
         for i, segment in enumerate(self.segment_widgets):
-            segment.set_segment_number(i + 1)  # Update segment number display
+            if segment is not None and hasattr(segment, 'set_segment_number'):
+                segment.set_segment_number(i + 1)  # Update segment number display
 
         # Update button visibility for all segments
         self.update_buttons_visibility()
@@ -1051,6 +1097,18 @@ class CalculatorTab(QWidget):
             return first_segment.departure_time.dateTime().toPyDateTime()
         else:
             return datetime.now()
+    
+    def get_departure_timezone(self):
+        """
+        Получает часовой пояс аэропорта отправления из первого сегмента маршрута
+        """
+        if self.segment_widgets:
+            first_segment = self.segment_widgets[0]
+            departure_icao = first_segment.get_departure_airport_code()
+            if departure_icao:
+                airport_info = first_segment.get_airport_info(departure_icao)
+                return airport_info.get('timezone', 'Europe/Minsk')
+        return 'Europe/Minsk'  # По умолчанию
 
     def update_preview(self):
         """Обновляет предварительный просмотр результатов"""
@@ -1058,7 +1116,7 @@ class CalculatorTab(QWidget):
             # Собираем параметры
             start_time = self.get_fdp_start_time()  # Получаем время из маршрута
             base_tz = self.base_timezone_combo.currentText()
-            local_tz = self.local_timezone_combo.currentText()
+            local_tz = self.get_departure_timezone()  # Автоматически определяем часовой пояс
             hours_since_duty = self.hours_since_duty_spin.value()
             sectors = self.get_sectors_count()
             has_frms = self.has_frms_combo.currentText() == "Да"
@@ -1143,7 +1201,7 @@ class CalculatorTab(QWidget):
             # Собираем все параметры
             start_time = self.get_fdp_start_time()  # Получаем время из маршрута
             base_tz = self.base_timezone_combo.currentText()
-            local_tz = self.local_timezone_combo.currentText()
+            local_tz = self.get_departure_timezone()  # Автоматически определяем часовой пояс
             hours_since_duty = self.hours_since_duty_spin.value()
             sectors = self.get_sectors_count()
             has_frms = self.has_frms_combo.currentText() == "Да"
@@ -1499,7 +1557,7 @@ class CalculatorTab(QWidget):
 Настройки FDP:
 - Дата начала: {start_time.strftime('%d.%m.%Y %H:%M')} (из маршрута)
 - Базовый часовой пояс: {self.base_timezone_combo.currentText()}
-- Местный часовой пояс: {self.local_timezone_combo.currentText()}
+- Местный часовой пояс: {self.get_departure_timezone()} (автоматически определен)
 - FRMS: {self.has_frms_combo.currentText()}
 - Отдых в полете: {'Да' if self.rest_in_flight_check.isChecked() else 'Нет'}
 - Секторов: {self.get_sectors_count()}
@@ -1545,8 +1603,7 @@ class CalculatorTab(QWidget):
             self.setTabOrder(first_segment.arrival_time, self.base_timezone_combo)
         
         # Затем основные параметры
-        self.setTabOrder(self.base_timezone_combo, self.local_timezone_combo)
-        self.setTabOrder(self.local_timezone_combo, self.hours_since_duty_spin)
+        self.setTabOrder(self.base_timezone_combo, self.hours_since_duty_spin)
         self.setTabOrder(self.hours_since_duty_spin, self.has_frms_combo)
         self.setTabOrder(self.has_frms_combo, self.rest_in_flight_check)
 
