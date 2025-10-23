@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt
 from crew_dialog import CrewDialog
 from aircraft_dialog import AircraftDialog
 from planning_tab import PlanningTab
-from calculator_gui import CalculatorTab  # Добавляем импорт CalculatorTab
+from calculator_gui import CalculatorTab  # Импорт рефакторенного CalculatorTab
 from schedule_tab import ScheduleTab
 from document_viewer import DocumentViewer
 from database import db
